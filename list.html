@@ -1,0 +1,51 @@
+<head>
+    <meta charset="utf-8" />
+    <script src = "FileSaver.js"></script>
+    <script src = "Tools.js"></script>
+    <script src = "Objects.js"></script>
+    <script src = "Lists.js"></script>
+    <script src = "Generators.js"></script>
+</head>
+<script>
+    var skribblGame = new Array();
+    function listIons(){
+       var ionListStr = "";
+       
+       skribblGame.push("This is a list of the polyatomic ions for a skribbl.io game (Only names).  Playing a game of skribbl.io can help with learning how to draw the compounds or know the compound formulas.\n");
+       for(var i = 0; i < polyIonsList.length; i++){
+           ionListStr += "<p>" + (i+1) + ". " + polyIonsList[i].name + ", " + polyIonsList[i].formula + "</p>";
+           var skribString = polyIonsList[i].name;
+           if(i < polyIonsList.length - 1){
+               skribString += ",";
+           }
+           skribblGame.push(skribString);
+       }
+       document.getElementById("area").innerHTML = ionListStr + "<p><button onClick='genSkribbl();'>Generate the list of ions for a skribbl.io game.</button></p>";
+       document.getElementById("description").innerHTML = "Ions are ordered by charge, then name.  Ions of the similar type (nitrate/nitrite) will be grouped together from lowest to highest oxygen count, even if it disrupts alphabetical order (but not if it disrupts charge order), and the anion containing the lowest number of oxygens will go first.";
+       document.getElementById("header").innerHTML = "List of Polyatomic Ions";
+    }
+    function listLigands(){
+        var ligandListStr = "";
+        for(var i = 0; i < ligands.length; i++){
+            ligandListStr += "<p>" + (i+1) + ". " + ligands[i].formula + "</p>";
+        }
+        document.getElementById("area").innerHTML = ligandListStr;
+        document.getElementById("description").innerHTML = "The list goes from strongest ligands at the top to weakest ligands at the bottom";
+        document.getElementById("header").innerHTML = "Spectrochemical Series";
+    }
+    function genSkribbl(){
+        var skribFile = new File(skribblGame, "Polyatomic_Ions_Skribbl_game_list.txt", {type: "text/plain;charset=utf-8"});
+        saveAs(skribFile);
+    }
+</script>
+<body onLoad="listIons();">
+<h1 id="header"></h1>
+<p id="description"></p>
+<p><button onClick="listIons();">Polyatomic Ions</button><button onClick="listLigands();">Spectrochemical series</button></p>
+<p id="area"></p>
+<p>If you wanted to practice naming compounds, go <a href="randomCompounds.html">here.</a></p>
+<br>
+<hr>
+<p>Credit to Ryan Kim</p>
+<p>Remember that you need javascript for this to work.</p>
+</body>
