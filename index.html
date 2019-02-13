@@ -67,8 +67,8 @@
             document.getElementById("show3").disabled = true;
         }
         if(Number(document.querySelector('input[name = "showOptions"]:checked').value) == 3 && practice){
-            document.getElementById("feedback").innerHTML = "You cannot practice an assesment by looking at the answers.";
-            alert("You cannot practice an assesment by looking at the answers.");
+            document.getElementById("feedback").innerHTML = "You cannot practice an assessment by looking at the answers.";
+            alert("You cannot practice an assessment by looking at the answers.");
         }
         else if(!practice && mode){
             mode = practice;
@@ -184,7 +184,7 @@
 <p><b>Remember to set what attributes of the compound you want to see, or nothing will happen.</b></p>
 <p>These are the following options for generating a compound.  All percents should be represented as decimals.</p>
 <p id="resetArea"></p>
-<p><b>Mode (online only)</b> <button onClick="setMode(false);">flashcards like</button><button onClick="setMode(true);">practice assesment</button></p>
+<p><b>Mode (online only)</b> <button onClick="setMode(false);">flashcards like</button><button onClick="setMode(true);">practice assessment</button></p>
 <p>Percent chance of getting a complicated compound (E.g. Na₂Ca₂(PO₄)₂ )<input type="text" name="2" id="percentComplicated" value="0" /></p>
 <p>Percent chance of getting a complex ion (E.g. Na[Fe(H₂O)₂Cl₄])<input type="text" name="1" id="percentComplex" value="0"/></p>
 <p>Number of compounds to generate(Only applies to text files) <input type="number" name="textCompoundNum" id="CompoundNum" value="10" /></p>
