@@ -376,7 +376,7 @@ function randomCompoundGenerator(percentComplicated, percentComplex, acceptableE
             }
         } else {//Make an ion that is like Manganese (III, IV) oxide
             var transitionMetal = acceptableElemsList[randInt(0, acceptableElemsList.length)];
-            while((transitionMetal.groupNumber < 3 && transitionMetal.groupNumber > 11) || transitionMetal.ionicOxStates.length < 2){ //Most group 12 transition metals don't really have two consecutive states, and we don't want to deal with mercury.
+            while(transitionMetal.groupNumber < 3 || transitionMetal.groupNumber > 11 || transitionMetal.ionicOxStates.length < 2){ //Most group 12 transition metals don't really have two consecutive states, and we don't want to deal with mercury.
                 transitionMetal = acceptableElemsList[randInt(0, acceptableElemsList.length)];
             }
             var firstCharge = transitionMetal.ionicOxStates[randInt(0, transitionMetal.ionicOxStates.length - 1)];
