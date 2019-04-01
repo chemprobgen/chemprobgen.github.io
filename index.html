@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="globalStyle.css" />
 </head>
 <script>
-    var outsideCompound;
+     var outsideCompound;
     var hasAnswered;
     var answerWithName;
     var mode = false;
@@ -33,9 +33,9 @@
                 var header = "Incorrect.  The correct answer was ";
                 var later = ".  Your answer was ";
                 if(answerWithName){
-                    document.getElementById("feedback").innerHTML = header + outsideCompound.formula.toLowerCase().replace(/ /g, "")  + later + answer.toLowerCase().replace(/ /g, "");
+                    document.getElementById("feedback").innerHTML = header + outsideCompound.formula  + later + answer.toLowerCase().replace(/ /g, "");
                 } else {
-                    document.getElementById("feedback").innerHTML = header + outsideCompound.name.toLowerCase().replace(/ /g, "") + later + answer.toLowerCase().replace(/ /g, "");
+                    document.getElementById("feedback").innerHTML = header + outsideCompound.name + later + answer.toLowerCase().replace(/ /g, "");
                 }
             }
             scoreDenominator++;
@@ -88,7 +88,7 @@
         var complex = parseFloat(document.getElementById("percentComplex").value);
         var showOption = Number(document.querySelector('input[name = "showOptions"]:checked').value);
         if(complicated >= 0 && complicated <= 1 && complex >= 0 && complex <= 1 && showOption != null){
-            if(mode && !hasAnswered){
+            if(mode && !hasAnswered && onSite){
                 scoreDenominator++;
                 document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" /> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
             }
