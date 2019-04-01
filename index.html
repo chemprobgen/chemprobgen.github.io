@@ -6,6 +6,7 @@
     <script src = "Objects.js"></script>
     <script src = "Lists.js"></script>
     <script src = "Generators.js"></script>
+    <link rel="stylesheet" href="globalStyle.css" />
 </head>
 <script>
     var outsideCompound;
@@ -14,6 +15,7 @@
     var mode = false;
     var scoreNumerator = 0;
     var scoreDenominator = 0;
+    var moreOptions = true;
     
     function submitAnswer(){
         if(answerWithName == null){
@@ -67,8 +69,8 @@
             document.getElementById("show3").disabled = true;
         }
         if(Number(document.querySelector('input[name = "showOptions"]:checked').value) == 3 && practice){
-            document.getElementById("feedback").innerHTML = "You cannot practice an assessment by looking at the answers.";
-            alert("You cannot practice an assessment by looking at the answers.");
+            document.getElementById("feedback").innerHTML = "You cannot practice an assesment by looking at the answers.";
+            alert("You cannot practice an assesment by looking at the answers.");
         }
         else if(!practice && mode){
             mode = practice;
@@ -171,40 +173,25 @@
             }
         }
     } 
+    
 </script>
-<style>
-    h1{
-        font-family:arial;
-    }
-    p{
-        font-family:Times New Romans;
-    }
-</style>
-<h1>Random Compound Generator</h1>
-<p><b>Remember to set what attributes of the compound you want to see, or nothing will happen.</b></p>
-<p>These are the following options for generating a compound.  All percents should be represented as decimals.</p>
+<h1>Random Compound Generator</h1>  
+<p>These are the following options for generating a compound.  All percents should be represented as decimals.  You can click <a href="randomCompoundsDescription.html">here</a> to view a description on what this website does.</p>
 <p id="resetArea"></p>
-<p><b>Mode (online only)</b> <button onClick="setMode(false);">flashcards like</button><button onClick="setMode(true);">practice assessment</button></p>
-<p>Percent chance of getting a complicated compound (E.g. Na₂Ca₂(PO₄)₂ )<input type="text" name="2" id="percentComplicated" value="0" /></p>
-<p>Percent chance of getting a complex ion (E.g. Na[Fe(H₂O)₂Cl₄])<input type="text" name="1" id="percentComplex" value="0"/></p>
-<p>Number of compounds to generate(Only applies to text files) <input type="number" name="textCompoundNum" id="CompoundNum" value="10" /></p>
+<p><b>Mode (online only)</b> <button onClick="setMode(false);">flashcards like</button><button onClick="setMode(true);">practice assesment</button></p>
+<p>Number of compounds to generate (Only applies to text files) <input type="number" name="textCompoundNum" id="CompoundNum" value="10" /></p>
 <p>Show which of the compound's attributes?</p>
 <ul>name <input type="radio" id="show0" name="showOptions" value="0" /></ul>
 <ul>formula <input type="radio" id="show1" name="showOptions" value="1" /></ul>
-<ul>random <input type="radio" id="show2" name="showOptions" value="2" /></ul>
+<ul>random <input type="radio" id="show2" name="showOptions" value="2" checked="checked" /></ul>
 <ul>both <input type="radio" id="show3" name="showOptions" value="3" /></ul>
 <button onClick="generateCompound(true);">Generate a compound</button> <button onClick="generateCompound(false);">Generate a text file of compounds</button>
 <p id="showHere"></p>
 <p id="mode"><button onClick="showName();">Show Name</button><button onClick="showFormula();">Show Formula</button><button onClick="showBoth();">Show Both</button></p>
 <p id ="feedback"></p>
+<p><b>Extra Options</b></p>
+<p>Percent chance of getting a complicated compound (E.g. Na₂Ca₂(PO₄)₂ )<input class="options" type="text" name="2" id="percentComplicated" value="0" /></p><p>Percent chance of getting a complex ion (E.g. Na[Fe(H₂O)₂Cl₄])<input class="options" type="text" name="1" id="percentComplex" value="0"/></p>
 <hr>
 <p>If you want to see a list of polyatomic ions or the spectrochemical series, go <a href="list.html">here.</a></p>
-<p>Note: The practice assesment score does not reset until you press reset or reload the page.  Also, skips count as wrong answers.</p>
-<p>Note: percent complex refers to the chance that each ion in the compound has to be complex.  It does not refer to the chance that the whole compound will contain a complex ion or not.</p>
-<p>Note: Dates generated with problemsets are in day/month/year format.</p>
-<p>Note: This tool cannot create hydrates.</p>
-<p>Note: If you choose for all ions to be complex but also choose to make a complicated ion, there is a chance that you may get a transition/post transition metal cations.</p>
-<br>
-<hr>
 <p>Credit to Ryan Kim</p>
 <p>Remember that you need javascript for this to work.</p>
