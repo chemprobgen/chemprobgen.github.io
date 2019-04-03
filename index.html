@@ -67,7 +67,8 @@
             generateCompound(true);
             mode = practice;
             document.getElementById("resetArea").innerHTML = '<button onClick="resetScore();">Reset Score</button>';
-            document.getElementById("generateArea").innerHTML = '<p><b>Answers are not case sensitive, and subscripts can be represented as numbers.</b></p>'
+            document.getElementById("assesmentText").innerHTML = '<b><p>Answers are not case sensitive, and subscripts can be represented as numbers.</p></b>';
+            document.getElementById("generateArea").innerHTML = '';
             document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
             document.getElementById("show3").disabled = true;
         }
@@ -80,6 +81,7 @@
             document.getElementById("mode").innerHTML = '<button onClick="showName();">Show Name</button><button onClick="showFormula();">Show Formula</button><button onClick="showBoth();">Show Both</button>';
             document.getElementById("feedback").innerHTML="";
             document.getElementById("resetArea").innerHTML="";
+             document.getElementById("assesmentText").innerHTML = '';
             document.getElementById("generateArea").innerHTML='<button onClick="generateCompound(true);">Generate a compound</button> <button onClick="generateCompound(false);">Generate a text file of compounds</button>';
             document.getElementById("show3").disabled = false;
         }
@@ -193,6 +195,7 @@
 <ul>random <input type="radio" id="show2" name="showOptions" value="2" checked="checked" /></ul>
 <ul>both <input type="radio" id="show3" name="showOptions" value="3" /></ul>
 <p id ="generateArea"><button onClick="generateCompound(true);">Generate a compound</button> <button onClick="generateCompound(false);">Generate a text file of compounds</button></p>
+<b id = "assesmentText"></b>
 <p id="showHere"></p>
 <p id="mode"><button onClick="showName();">Show Name</button><button onClick="showFormula();">Show Formula</button><button onClick="showBoth();">Show Both</button></p>
 <p id ="feedback"></p>
