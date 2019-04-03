@@ -15,7 +15,6 @@
 </head>
 <script>
      var outsideCompound;
-    var hasAnswered;
     var answerWithName;
     var mode = false;
     var scoreNumerator = 0;
@@ -23,13 +22,10 @@
     var moreOptions = true;
     
     function submitAnswer(){
-        if(answerWithName == null){
+        if(document.getElementById("answerBox").value.length < 1){
             alert("There is nothing to answer.");
-        }
-        if(hasAnswered){
-            document.getElementById("feedback").innerHTML = "You have already attempted to answer this";
-        }
-        if(!hasAnswered){
+        } else {
+            document.getElementById("feedback").innerHTML = "";
             var answer = document.getElementById("answerBox").value;
             if(answer.toLowerCase().replace(/ /g, "") === outsideCompound.name.toLowerCase().replace(/ /g, "") && !answerWithName || strSubScript(answer.toLowerCase()).replace(/ /g, "") === outsideCompound.formula.toLowerCase().replace(/ /g, "") && answerWithName){
                 document.getElementById("feedback").innerHTML = "Correct!";
@@ -44,8 +40,8 @@
                 }
             }
             scoreDenominator++;
-            hasAnswered = true;
-            document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" /> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+            document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+            generateCompound(true);
         }
     }
     
@@ -62,7 +58,8 @@
     function resetScore(){
         scoreNumerator = 0;
         scoreDenominator = 0;
-        document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" /> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+        generateCompound(true);
+        document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
     }
     
     function setMode(practice){
@@ -70,7 +67,8 @@
             generateCompound(true);
             mode = practice;
             document.getElementById("resetArea").innerHTML = '<button onClick="resetScore();">Reset Score</button>';
-            document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" /> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+            document.getElementById("generateArea").innerHTML = '<p><b>Answers are not case sensitive, and subscripts can be represented as numbers.</b></p>'
+            document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
             document.getElementById("show3").disabled = true;
         }
         if(Number(document.querySelector('input[name = "showOptions"]:checked').value) == 3 && practice){
@@ -82,8 +80,8 @@
             document.getElementById("mode").innerHTML = '<button onClick="showName();">Show Name</button><button onClick="showFormula();">Show Formula</button><button onClick="showBoth();">Show Both</button>';
             document.getElementById("feedback").innerHTML="";
             document.getElementById("resetArea").innerHTML="";
+            document.getElementById("generateArea").innerHTML='<button onClick="generateCompound(true);">Generate a compound</button> <button onClick="generateCompound(false);">Generate a text file of compounds</button>';
             document.getElementById("show3").disabled = false;
-            hasAnswered = null;
         }
 
     }
@@ -93,12 +91,6 @@
         var complex = parseFloat(document.getElementById("percentComplex").value);
         var showOption = Number(document.querySelector('input[name = "showOptions"]:checked').value);
         if(complicated >= 0 && complicated <= 1 && complex >= 0 && complex <= 1 && showOption != null){
-            if(mode && !hasAnswered && onSite){
-                scoreDenominator++;
-                document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" /> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
-            }
-            hasAnswered = false;
-            document.getElementById("feedback").innerHTML = "";
             var compound = randomCompoundGenerator(complicated, complex, acceptableRandElemList, allPoly);
             outsideCompound = compound;
             if(onSite){
@@ -178,6 +170,15 @@
             }
         }
     } 
+    
+    function enterButtonSubmit(e){
+        if(e.keyCode == 13){
+            submitAnswer();
+            return false;
+        } else {
+            return true;
+        }
+    }
     
 </script>
 <div class="mainArea">
