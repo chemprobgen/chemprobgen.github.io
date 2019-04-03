@@ -1,5 +1,6 @@
     h1{
         font-family:arial;
+        margin: 0.5em;
     }
     p{
         font-family: arial;
@@ -8,14 +9,14 @@
         font-family: arial;
     }
     body{
-        background-color:#443eb7;
+        margin:0em;
     }
     .navbar{
         list-style-type:none;
         margin: 0em;
         padding: 0em;
         overflow: hidden;
-        background-color:#4dc7e2;
+        background-color:#d0e3e5;
     }
     .navitem{
         float: left;
@@ -34,13 +35,10 @@
        color:white;
     }
     .mainArea{
-        background-color:#63a7c6;
+        background-color:#ffffff;
         overflow:hidden;
         margin: 0em;
     }
     div p{
-        margin:1em;
-    }
-    div h1{
         margin:1em;
     }
