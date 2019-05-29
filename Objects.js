@@ -62,11 +62,11 @@ function Ion( //The object for just a normal ion
         }
     }
     for(i = 0; i < ligands.length; i++){
-        if(this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1){
+        if(this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1 && ligandQuantities[i] > 1){
             this.formulaNoCharge += "(";
         }
         this.formulaNoCharge += ligands[i].formulaNoCharge;
-        if(this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1){
+        if(this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1 && ligandQuantities[i] > 1){
             this.formulaNoCharge += ")";
         }
         if(ligandQuantities[i] > 1){
