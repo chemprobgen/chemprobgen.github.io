@@ -27,7 +27,7 @@
         } else {
             document.getElementById("feedback").innerHTML = "";
             var answer = document.getElementById("answerBox").value;
-            if(answer.toLowerCase().replace(/ /g, "") === outsideCompound.name.toLowerCase().replace(/ /g, "") && !answerWithName || strSubScript(answer.toLowerCase()).replace(/ /g, "") === outsideCompound.formula.toLowerCase().replace(/ /g, "") && answerWithName){
+            if(answer.toLowerCase().replace(/ /g, "") == outsideCompound.name.toLowerCase().replace(/ /g, "") && !answerWithName || strSubScript(answer.toLowerCase()).replace(/ /g, "") === outsideCompound.formula.toLowerCase().replace(/ /g, "") && answerWithName){
                 document.getElementById("feedback").innerHTML = "Correct!";
                 scoreNumerator++;
             } else {
@@ -36,7 +36,7 @@
                 if(answerWithName){
                     document.getElementById("feedback").innerHTML = header + outsideCompound.formula  + later + answer.toLowerCase().replace(/ /g, "");
                 } else {
-                    document.getElementById("feedback").innerHTML = header + outsideCompound.name + later + answer.toLowerCase().replace(/ /g, "");
+                    document.getElementById("feedback").innerHTML = header + outsideCompound.name + later + answer.toLowerCase();
                 }
             }
             scoreDenominator++;
