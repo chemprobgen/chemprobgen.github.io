@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!--Header info -->
+<meta charset="utf-8" />
+<header id = "loadHead"></header>
+<script src = "loadstuff.js"></script>
+<body onLoad = "loadSections();">
+<!-- End of Header info -->
+<script src = "FileSaver.js"></script>
+<script src = "Tools.js"></script>
+<script src = "Objects.js"></script>
+<script src = "Lists.js"></script>
+<script src = "Generators.js"></script>
+<script>
+    function convert(){
+        var compound =  formulaToCompound(strSubScript(document.getElementById("dataField").value))[0];
+        document.getElementById("output").innerHTML = compound.name + " " + compound.formula;
+    }
+</script>
+<h1>Compound Formula to Name Solver</h1>
+<div class="mainArea">
+<p>A tool that can generate a compound name based on its formula.  Of course, this only works for plausible compounds.  Unfortunately, this does not support name -> formula yet.</p>
+<br>
+<p>Compound Formula: <input type="text" id="dataField" /> <button onClick="convert();">convert</button></p>
+<p id="output"></p>
+</div>
+</body>
+<!--Footer info -->
+<footer id ="loadFoot"></footer>
+<p><b><noscript>This message appeared because you have javascript disabled.  This site won't work unless you re-enable it.<noscript></b></p>

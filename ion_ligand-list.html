@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<ul class="navbar">
-    <li class="navitem"><p><a href="index.html"><b>Chemistry Problem Generator</b></a></p></li>
-    <li class="navitem"><p><a href="faq.html">FAQ</a></p></li>
-</ul>
+<title>Polyatomic ion and ligand list</title>
 <head>
     <meta charset="utf-8" />
     <script src = "FileSaver.js"></script>
@@ -10,11 +7,14 @@
     <script src = "Objects.js"></script>
     <script src = "Lists.js"></script>
     <script src = "Generators.js"></script>
-    <link rel="stylesheet" href="globalStyle.css" />
 </head>
-<title>Polyatomic Ion List</title>
+<!--Header info -->
+<header id = "loadHead"></header>
+<script src = "loadstuff.js"></script>
+<!-- End of Header info -->	
 <script>
     var skribblGame = new Array();
+	loadSections();
     function listIons(){
        var ionListStr = "";
        
@@ -28,7 +28,7 @@
            skribblGame.push(skribString);
        }
        document.getElementById("area").innerHTML = ionListStr + "<p><button onClick='genSkribbl();'>Generate the list of ions for a skribbl.io game.</button></p>";
-       document.getElementById("description").innerHTML = "Ions are ordered by charge, then name.  Ions of the similar type (nitrate/nitrite) will be grouped together from lowest to highest oxygen count, even if it disrupts alphabetical order (but not if it disrupts charge order), and the anion containing the lowest number of oxygens will go first.";
+       document.getElementById("description").innerHTML = "Ions are ordered by charge, then name.  Ions of the similar type (nitrate/nitrite) will be grouped together from lowest to highest oxygen count, even if it disrupts alphabetical order (but not if it disrupts charge order), and the anion containing the lowest number of oxygens will go first. <p>This list also has capabilities to generate a list of polyatomic ions for a skribbl.io game, so that you can practice drawing/naming compounds with friends.</p>";
        document.getElementById("header").innerHTML = "List of Polyatomic Ions";
     }
     function listLigands(){
@@ -51,10 +51,8 @@
 <p id="description"></p>
 <p><button onClick="listIons();">Polyatomic Ions</button><button onClick="listLigands();">Spectrochemical series</button></p>
 <p id="area"></p>
-<p>If you wanted to practice naming compounds, go <a href="index.html">here.</a></p>
-<br>
-<hr>
-<p>Credit to Ryan Kim</p>
-<p>Remember that you need javascript for this to work.</p>
-</body>
+<p>If you wanted to practice naming compounds, go <a href="randomCompounds.html">here.</a></p>
 </div>
+<!--Footer info -->
+<footer id ="loadFoot"></footer>
+<p><b><noscript>This message appeared because you have javascript disabled.  This site won't work unless you re-enable it.<noscript></b></p>

@@ -1,4 +1,4 @@
-//Credit to Ryan Kim.
+//Credit to lh64.
 //NOTE: Probably almost all the organic compounds have incorrect oxidation states per ion
 var elementList = new Array();
 elementList.push(
@@ -192,7 +192,7 @@ elementList.push(
         15,
         30.97,
         [-3],
-        [-3, 3, 5],
+        [-5, -3, 3, 5],
         false,
         2.19
     )    
@@ -1184,6 +1184,17 @@ polyIonsList.push(
     )    
 );
 
+var collisionPolyAtomicIons = new Array(); //Array of elements like peroxide, which are elements that have their formula inside of part of another ion's formula.  Another example is Cyanide and Thiocyanate
+for(var i = 0; i < polyIonsList.length; i++){
+	for(var j = i + 1; j < polyIonsList.length; j++){ //check all ions against each other to see if they collide
+		if(polyIonsList[i].formulaNoCharge.indexOf(polyIonsList[j].formulaNoCharge) > -1 && !collisionPolyAtomicIons.includes(polyIonsList[j])){
+			collisionPolyAtomicIons.push(polyIonsList[j]);
+		}
+		if(polyIonsList[j].formulaNoCharge.indexOf(polyIonsList[i].formulaNoCharge) > -1 && !collisionPolyAtomicIons.includes(polyIonsList[i])){
+			collisionPolyAtomicIons.push(polyIonsList[i]);
+		}
+	}
+}
 var ligands = new Array(); //A list of ligands, ordered by strength
 var ligandTeeth = new Array();
 ligands.push(
@@ -1336,7 +1347,7 @@ ideToO.push("hydroxide");
 var vowels = ["a", "e", "i", "o", "u", "y"]; //Y is included because its presence in the list fixes more cases of naming negative ions
 
 var allPoly = new Array();
-for(var i = 0; i < polyIonsList.length; i++){
+for(i = 0; i < polyIonsList.length; i++){
     allPoly.push(polyIonsList[i]);
 }
 allPoly.splice(allPoly.indexOf(polyIonsList[polyIonsListIndexOf("cyanide")]), 1);
@@ -1419,4 +1430,3 @@ while(count < 4 && index < elementList.length){ //add most elements in group 17
 acceptableRandElemList.push(elementList[46]); //Silver
 acceptableRandElemList.push(elementList[47]); //Cadmium
 acceptableRandElemList.push(elementList[53]); //add xenon
-
