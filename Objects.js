@@ -37,6 +37,7 @@ function Ion( //The object for just a normal ion
     this.ligands = ligands;
     this.ligandQuantities = ligandQuantities;
     this.charge = 0;
+	this.quantityLigandSum = this.quantities.reduce(function(acc, val){return acc + val;}, 0) + this.ligands.length;
     this.combineElems = combineElems; //to support ions that may have elements that have many different charges.  This doesn't affect ligands that are in the ion.
     for(var i = 0; i < charges.length; i++){
         this.charge += charges[i] * quantities[i];
@@ -62,11 +63,11 @@ function Ion( //The object for just a normal ion
         }
     }
     for(i = 0; i < ligands.length; i++){
-        if(this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1 && ligandQuantities[i] > 1){
+        if((this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1 || this.ligands[i].formulaNoCharge != removeSubScript(this.ligands[i].formulaNoCharge))&& ligandQuantities[i] > 1){
             this.formulaNoCharge += "(";
         }
         this.formulaNoCharge += ligands[i].formulaNoCharge;
-        if(this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1 && ligandQuantities[i] > 1){
+        if((this.ligands[i].formulaNoCharge.replace(/[^A-Z]/g, "").length > 1 || this.ligands[i].formulaNoCharge != removeSubScript(this.ligands[i].formulaNoCharge))&& ligandQuantities[i] > 1){
             this.formulaNoCharge += ")";
         }
         if(ligandQuantities[i] > 1){
@@ -89,6 +90,127 @@ function Ion( //The object for just a normal ion
         chargeString += "-";
     }
     this.formula += strSupScript(chargeString); //The chargeString is there in case there is a way to make superscripts with javascript
+	
+	//Migrated code for naming from ion generator to make things easier for the formula to compound function
+	if(this.name == null){
+		if(this.ligands.length > 0){
+			var ligandsNamePortion = new Array();
+			for(var i = 0; i < ligands.length; i++){
+				ligandsNamePortion.push(this.ligands[i]);
+				if(ligandsNamePortion[i].formula === "CO"){
+					ligandsNamePortion[i].name = "carbonyl";
+				}
+				if(ligandsNamePortion[i].formula === "NH₃"){
+					ligandsNamePortion[i].name = "ammine";
+				}
+				if(ligandsNamePortion[i].formula === "H₂O"){
+					ligandsNamePortion[i].name = "aqua";
+				}
+				if(ligandsNamePortion[i].formula === "NO"){
+					ligandsNamePortion[i].name = "nitrosyl";
+				}				
+			}
+			ligandsNamePortion.sort(compareIons);
+			this.name = "";
+			for(var i = 0; i < ligandsNamePortion.length; i++){
+				var prefix = "";
+				prefix = ligandsNamePortion[i].name.replace("ide", "ido").replace("ite", "ito").replace("ate", "ato");
+				if(ideToO.includes(ligandsNamePortion[i].name)){
+					prefix = ligandsNamePortion[i].name.replace("ide", "o");
+				}
+				var realIndex = this.ligands.indexOf(ligandsNamePortion[i]);
+				if(ligandQuantities[realIndex] > 1){
+					prefix = quantityToPrefix(ligandQuantities[realIndex]) + prefix;
+				}
+				this.name += prefix;
+			}
+			if(this.charge > 0){
+				this.name += elements[0].name + "(" + romanize(charges[0]) + ")"; //the metal cation of a complex ion should be at the first index in the element list
+			} else { //Negative ions are brutal, mate.
+				var metalName = elements[0].name.replace("ium","um").replace(/um(?![\s\S]*um)/, 'ate'); //This misses tungsten, but that's not even a metal that can be generated here, so it doesn't matter
+				if(metalName === "copper"){
+					metalName = "cuprate";
+				}
+				if(metalName === "gold"){
+					metalName = "aurate";
+				}
+				if(metalName === "iron"){
+					metalName = "ferrate";
+				}
+				if(metalName === "lead"){
+					metalName = "plumbate";
+				}
+				if(metalName === "manganese"){
+					metalName = "manganate";
+				}
+				if(metalName === "mercury"){
+					metalName = "mercurate";
+				}
+				if(metalName === "silver"){
+					metalName = "argenate";
+				}
+				if(metalName === "tin"){
+					metalName = "stannate";
+				}
+				if(metalName.indexOf("ate") < 0){
+					metalName += "ate";
+				}
+				this.name += metalName + "(" + romanize(charges[0]) + ")";
+				//Account for conventional names
+				if(this.name == "hexacyanoferrate(III)"){
+					this.name = "ferricyanide";
+				}
+				else if(this.name == "hexacyanoferrate(II)"){
+					this.name = "ferrocyanide";
+				}
+			}
+		} else {
+			if(this.quantities.reduce(function(acc, val){return acc + val;}, 0) < 2){
+				if(this.charge > 0){ //positive ion of a single element naming
+					if(this.elements[0].ionicOxStates.length > 1 && this.elements[0].metal){ //make sure the name is unambiguous for metals with multiple oxidation states
+						this.name = elements[0].name + "(" + romanize(this.charge) + ")";
+					} else {
+						this.name = elements[0].name;
+					}
+				} else { //negative ion of a single element naming
+					var nonConsecutiveVowelCount = 0;
+					var index = 0;
+					var prevIndex = -1;
+					var maxCount = 0;
+					if(elements[0].number == 14 || elements[0].number == 32 || elements[0].number == 33 || elements[0].number == 34 || elements[0].number == 52){ //Count two nonconsecutive vowels instead of one
+						maxCount = 3;
+					} else { //Count one nonconsecutive vowel and then make a substring for that part.  Afterwards, append a -ide to the name.
+						maxCount = 2;
+					}
+					while(index < elements[0].name.length && nonConsecutiveVowelCount < maxCount){
+						if(vowels.indexOf(elements[0].name[index].toLowerCase()) > -1){ //check if the character is in the vowels list
+							nonConsecutiveVowelCount++;
+						}
+						if(prevIndex > -1){
+							if(vowels.indexOf(elements[0].name[prevIndex].toLowerCase()) > -1 && vowels.indexOf(elements[0].name[index].toLowerCase()) > -1){ //If there's a vowel right behind what was a vowel, reduce the count because we are only counting non consecutive vowels
+								nonConsecutiveVowelCount--;
+							}
+						}
+						if(nonConsecutiveVowelCount < maxCount){
+							prevIndex++;
+							index++;
+						}
+					}	
+					this.name = elements[0].name.substr(0, index) + "ide"; //index represents how many characters there were before the nth nonconsecutive vowel appeared.					
+				}				
+			}
+		}
+	}
+}
+
+function IonGroup( //Object for dealing with multiple possibilities that occur when converting a formula to a compound object
+	index,
+	ionList,
+	ionQuantities
+){
+	this.index = index; //index represents where in the formula that ion group symbol starts
+	this.ionList = ionList; //array of an array of ions.  This is so that multi-ion combos that aren't polyatomic ions can be supported
+	this.ionQuantities = ionQuantities; //quantities to support the multi-ion combos
 }
 
 function Compound(
@@ -132,7 +254,7 @@ function Compound(
         containsHydrogenCation = true;
     }
     for(i = 0; i < this.ions.length; i++){
-        if(ions[i].elements.length > 1 || polyIonsListIndexOf(ions[i].name) > -1 || ions[i].elements[0].metal){
+        if(ions[i].quantities.reduce(function(acc, val){return acc + val;}, 0) + ions[i].ligands.length > 1 || polyIonsListIndexOf(ions[i].name) > -1 || ions[i].elements[0].metal){
             this.ionic = true;
         }
         if(ions[i].charge > 0){
@@ -229,15 +351,18 @@ function Compound(
     }
     this.name = cationString + anionString;
     
-    if(this.ions[0].formulaNoCharge == "H" && this.ions.length == 2 && ((this.ions[1].elements[this.ions[1].elements.length - 1].number == 8 && this.ions[1].elements.length > 1) || this.ions[1].elements[0].groupNumber == 17)){ //oxyacid or hydro acid with a halogen
+    if(this.ions[0].formulaNoCharge == "H" && 
+	this.ions.length == 2 && 
+	((this.ions[1].elements[this.ions[1].elements.length - 1].number == 8 && this.ions[1].elements.length > 1) 
+	|| this.ions[1].elements[0].groupNumber == 17)){ //oxyacid or hydro acid with a halogen
         var acidName = this.ions[1].name.replace("ate", "ic").replace("ite", "ous") + " acid";
         acidName = acidName.replace("phosph","phosphor").replace("sulf","sulfur");
-        if(this.ions[1].elements[0].groupNumber == 17 && this.ions.length < 2){
-            acidName = "Hydro" + acidName.replace("ide", "ic");
-        }
+		if(this.ions[1].quantityLigandSum < 2){
+			acidName = "hydro" + acidName.replace("ide", "ic");
+		}
         this.name = acidName;
     }
-    if(this.formula === "H₃N"){
+    if(this.formula == "H₃N" || this.formula == "NH₃"){
         this.name = "ammonia";
         this.formula = "NH₃";
     }
@@ -248,5 +373,143 @@ function Compound(
         this.name = "water";
         this.formula = "H₂O";
     }
+	else if(this.formula == "H₄C" || this.formula == "CH₄"){
+		this.name = "methane";
+		this.formula = "CH₄";
+	}
     
 }
+
+function Reaction(
+    reactants,
+    reactantQuantities,
+    areReactantsDissociated,
+    products,
+    productQuantities,
+    areProductsDissociated
+){
+    this.reactants = reactants;
+    this.reactantQuantities = reactantQuantities;
+    this.areReactantsDissociated = areReactantsDissociated;
+    this.products = products;
+    this.productQuantities = productQuantities;
+    this.areProductsDissociated = areProductsDissociated;
+    this.reactantSpecies = new Array();
+    this.reactantSpeciesQuantities = new Array();
+    this.productSpecies = new Array();
+    this.productSpeciesQuantities = new Array();    
+    for(var i = 0; i < reactants.length; i++){
+        if(areReactantsDissociated[i]){
+            for(var j = 0; j < reactants[i].ions.length; j++){
+                this.reactantSpecies.push(reactants[i].ions[j].formula);
+                this.reactantSpeciesQuantities.push(reactantQuantities[i] * reactants[i].quantities[j]);
+            }
+        } else {
+            this.reactantSpecies.push(reactants[i].formula);
+            this.reactantSpeciesQuantities.push(reactantQuantities[i]);
+        }
+    }
+
+    for(i = 0; i < products.length; i++){
+        if(areProductsDissociated[i]){
+            for(j = 0; j < products[i].ions.length; j++){
+                this.productSpecies.push(products[i].ions[j].formula);
+                this.productSpeciesQuantities.push(productQuantities[i] * products[i].quantities[j]);
+            }
+        } else {
+            this.productSpecies.push(products[i].formula);
+            this.productSpeciesQuantities.push(productQuantities[i]);
+        }
+    }    
+    for(i = 0; i < this.reactantSpecies.length; i++){ //Remove spectator ions
+        for(j = 0; j < this.productSpecies.length; j++){
+            if(this.reactantSpecies[i] === this.productSpecies[j]){
+                this.reactantSpecies.splice(i, 1);
+                this.reactantSpeciesQuantities.splice(i, 1);
+                this.productSpecies.splice(j, 1);
+                this.productSpeciesQuantities.splice(j, 1);
+            }
+        }
+    }
+    
+}
+
+//reaction string code
+Object.defineProperty(Reaction.prototype, 'reactionString', {
+   get: function(){
+       //code that needs to be repasted here too because stuff changes
+        this.reactantSpecies = new Array();
+        this.reactantSpeciesQuantities = new Array();
+        this.productSpecies = new Array();
+        this.productSpeciesQuantities = new Array();
+        for(var i = 0; i < this.reactants.length; i++){
+            if(this.areReactantsDissociated[i]){
+                for(var j = 0; j < this.reactants[i].ions.length; j++){
+                    this.reactantSpecies.push(this.reactants[i].ions[j].formula);
+                    this.reactantSpeciesQuantities.push(this.reactantQuantities[i] * this.reactants[i].quantities[j]);
+                }
+            } else {
+                this.reactantSpecies.push(this.reactants[i].formula);
+                this.reactantSpeciesQuantities.push(this.reactantQuantities[i]);
+            }
+        }
+    
+        for(i = 0; i < this.products.length; i++){
+            if(this.areProductsDissociated[i]){
+                for(j = 0; j < this.products[i].ions.length; j++){
+                    this.productSpecies.push(this.products[i].ions[j].formula);
+                    this.productSpeciesQuantities.push(this.productQuantities[i] * this.products[i].quantities[j]);
+                }
+            } else {
+                this.productSpecies.push(this.products[i].formula);
+                this.productSpeciesQuantities.push(this.productQuantities[i]);
+            }
+        }    
+        for(i = 0; i < this.reactantSpecies.length; i++){ //Remove spectator ions
+            for(j = 0; j < this.productSpecies.length; j++){
+                if(this.reactantSpecies[i] === this.productSpecies[j]){
+                    this.reactantSpecies.splice(i, 1);
+                    this.reactantSpeciesQuantities.splice(i, 1);
+                    this.productSpecies.splice(j, 1);
+                    this.productSpeciesQuantities.splice(j, 1);
+                }
+            }
+        }
+        //actual reaction string code
+       var reactionString = "";
+        for(var i = 0; i < this.reactantSpecies.length; i++){
+            if(this.reactantSpeciesQuantities[i] > 1){
+                reactionString += this.reactantSpeciesQuantities[i];
+            }
+            reactionString += this.reactantSpecies[i];
+            if(i < this.reactantSpecies.length - 1){
+                reactionString += " + ";
+            }
+        }
+        reactionString += " -> ";
+        for(i = 0; i < this.productSpecies.length; i++){
+            if(this.productSpeciesQuantities[i] > 1){
+                reactionString += this.productSpeciesQuantities[i];
+            }
+            reactionString += this.productSpecies[i];
+            if(i < this.productSpecies.length - 1){
+                reactionString += " + ";
+            }
+        }
+        return reactionString;
+   } 
+});
+
+
+function ReductionPotentialRxn(
+    rxn, 
+    chargeChange, 
+    cellPotential 
+){ //For reduction, chargeChange is negative, for oxidation it's positive.  MnO4- + 5e- -> Mn2+ is (-5) since 5e- are added 
+    this.rxn = rxn;
+    this.chargeChange = chargeChange;
+    this.cellPotential = cellPotential;
+}
+ReductionPotentialRxn.prototype.flip = new function(){
+    
+};

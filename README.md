@@ -1,4 +1,6 @@
 # chemprobgen.github.io
-This is a project that I hope to expand greatly.  Currently, it can only generate random compounds, but I would like to make it have functionality to provide problems from almost all the units in general chemistry.
+This is a project I hope to greatly expand so that it can generate problems for chemistry students up to the general chemistry level in college.
 
-Credit to https://github.com/eligrey/FileSaver.js for file saving capability.
+Credits:
+* Credit to https://github.com/eligrey/FileSaver.js for file saving capability.
+* Credit to https://github.com/Sanketh7/truss-simulator/blob/master/rref.js for rref capability in balancing chemical equations.

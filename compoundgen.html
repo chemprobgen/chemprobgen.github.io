@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<title>Random Compound Generator</title>
+<head>
+    <meta charset="utf-8" />
+    <script src = "FileSaver.js"></script>
+    <script src = "Tools.js"></script>
+    <script src = "Objects.js"></script>
+    <script src = "Lists.js"></script>
+    <script src = "Generators.js"></script>
+</head>
+<!--Header info -->
+<header id = "loadHead"></header>
+<script src = "loadstuff.js"></script>
+<body onLoad = "loadSections();">
+<!-- End of Header info -->	
+<script>
+    var outsideCompound;
+    var answerWithName;
+    var mode = false;
+    var scoreNumerator = 0;
+    var scoreDenominator = 0;
+    var moreOptions = true;
+    
+    function submitAnswer(){
+        if(document.getElementById("answerBox").value.length < 1){
+            alert("There is nothing to answer.");
+        } else {
+            document.getElementById("feedback").innerHTML = "";
+            var answer = document.getElementById("answerBox").value;
+            if(answer.toLowerCase().replace(/ /g, "") == outsideCompound.name.toLowerCase().replace(/ /g, "") && !answerWithName || strSubScript(answer.toLowerCase()).replace(/ /g, "") === outsideCompound.formula.toLowerCase().replace(/ /g, "") && answerWithName){
+                document.getElementById("feedback").innerHTML = "Correct!";
+                scoreNumerator++;
+            } else {
+                var header = "Incorrect.  The correct answer was ";
+                var later = ".  Your answer was ";
+                if(answerWithName){
+                    document.getElementById("feedback").innerHTML = header + outsideCompound.formula  + later + answer.toLowerCase();
+                } else {
+                    document.getElementById("feedback").innerHTML = header + outsideCompound.name + later + answer.toLowerCase();
+                }
+            }
+            scoreDenominator++;
+            document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+            generateCompound(true);
+        }
+    }
+    
+    function showName(){
+        document.getElementById("showHere").innerHTML = outsideCompound.name;
+    }
+    function showFormula(){
+        document.getElementById("showHere").innerHTML = outsideCompound.formula;
+    }
+    function showBoth(){
+        document.getElementById("showHere").innerHTML = outsideCompound.name + " " + outsideCompound.formula;
+    }
+    
+    function resetScore(){
+        scoreNumerator = 0;
+        scoreDenominator = 0;
+        generateCompound(true);
+        document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+    }
+    
+    function setMode(practice){
+        if(practice && !mode && Number(document.querySelector('input[name = "showOptions"]:checked').value) < 3){
+            generateCompound(true);
+            mode = practice;
+            document.getElementById("resetArea").innerHTML = '<button onClick="resetScore();">Reset Score</button>';
+            document.getElementById("assesmentText").innerHTML = '<b><p>Answers are not case sensitive, and subscripts can be represented as numbers.</p></b>';
+            document.getElementById("generateArea").innerHTML = '';
+            document.getElementById("mode").innerHTML = '<input type="text" name="answer" id="answerBox" onkeypress="enterButtonSubmit(event);"/> <button onClick="submitAnswer();" id="answerButton">answer</button>  Score: ' + scoreNumerator + "/" + scoreDenominator;
+            document.getElementById("show3").disabled = true;
+        }
+        if(Number(document.querySelector('input[name = "showOptions"]:checked').value) == 3 && practice){
+            document.getElementById("feedback").innerHTML = "You cannot practice an assesment by looking at the answers.";
+            alert("You cannot practice an assesment by looking at the answers.");
+        }
+        else if(!practice && mode){
+            mode = practice;
+            document.getElementById("mode").innerHTML = '<button onClick="showName();">Show Name</button><button onClick="showFormula();">Show Formula</button><button onClick="showBoth();">Show Both</button>';
+            document.getElementById("feedback").innerHTML="";
+            document.getElementById("resetArea").innerHTML="";
+            document.getElementById("assesmentText").innerHTML = '';
+            document.getElementById("generateArea").innerHTML='<button onClick="generateCompound(true);">Generate a compound</button> <button onClick="generateCompound(false);">Generate a text file of compounds</button>';
+            document.getElementById("show3").disabled = false;
+        }
+
+    }
+    
+    function generateCompound(onSite){
+        var complicated = parseFloat(document.getElementById("percentComplicated").value);
+        var complex = parseFloat(document.getElementById("percentComplex").value);
+		var covalent = parseFloat(document.getElementById("percentCovalent").value);
+		if(complicated < 0 || complicated > 1 || complex < 0 || complex > 1 || covalent < 0 || covalent > 1){
+			alert("probabilities should be between 0 and 1");
+			return;
+		}
+        var showOption = Number(document.querySelector('input[name = "showOptions"]:checked').value);
+        if(complicated >= 0 && complicated <= 1 && complex >= 0 && complex <= 1 && showOption != null){
+            var compound = randomCompoundGenerator(covalent, complicated, complex, acceptableRandElemList, allPoly);
+            outsideCompound = compound;
+            if(onSite){
+                switch(showOption){
+                    case 0:
+                        document.getElementById("showHere").innerHTML = compound.name;
+                        answerWithName = true;
+                        break;
+                    case 1:
+                        document.getElementById("showHere").innerHTML = compound.formula;
+                        answerWithName = false;
+                        break;
+                    case 2:
+                        if(randInt(0, 2) == 1){
+                            document.getElementById("showHere").innerHTML = compound.name;
+                            answerWithName = true;
+                        } else {
+                            document.getElementById("showHere").innerHTML = compound.formula;
+                            answerWithName = false;
+                        }
+                        break;
+                    case 3:
+                        document.getElementById("showHere").innerHTML = compound.name + " " + compound.formula;
+                        break;
+                    default:
+                        alert("out of bounds failure with an option value of " + showOption);
+                        break;
+                }
+            } else {
+                var numCompounds = Number(document.getElementById("CompoundNum").value);
+                var problemSet = new Array();
+                var answers = new Array();
+                var today = new Date();
+                var date = today.getDate() + "/" + (today.getMonth()+1) + "/" + today.getFullYear();
+                switch(showOption){
+                    case 0:
+                        problemSet.push("Find the corresponding formulas for the following compounds.\n\n");
+                        break;
+                    case 1:
+                        problemSet.push("Find the corresponding names for the following compounds.\n\n");
+                        break;
+                    case 2:
+                        problemSet.push("Find the corresponding formula for every name and the corresponding name for every formula.\n\n");
+                        break;
+                }
+                answers.push("Here are the answers for the problemset that was generated.\n\n");
+                
+                for(var i = 0; i < numCompounds; i++){
+                    compound = randomCompoundGenerator(covalent, complicated, complex, acceptableRandElemList, allPoly); //One compound name will get wasted, whether this statement is at the top or the bottom.
+                    var header = (i+1).toString() + ". ";
+                    if(showOption < 3){
+                        switch(showOption){
+                            case 0:
+                                problemSet.push(header + compound.name + "\n");
+                                break;
+                            case 1:
+                                problemSet.push(header + compound.formula + "\n");
+                                break;
+                            case 2:
+                                if(randInt(0, 2) == 0){
+                                    problemSet.push(header + compound.name + "\n");
+                                } else {
+                                    problemSet.push(header + compound.formula + "\n");
+                                }
+                                break;
+                        }
+                    }
+                    answers.push(header + compound.name + " " + compound.formula + "\n");
+                }
+                if(problemSet.length > 0){
+                    var problemFile = new File(problemSet, "chemical_naming_practice_problems_" + date + ".txt", {type: "text/plain;charset=utf-8"});
+                    saveAs(problemFile);
+                }
+                var answerFile = new File(answers, "chemical_naming_practice_answers_" + date + ".txt", {type: "text/plain;charset=utf-8"});
+                saveAs(answerFile);
+                document.getElementById("showHere").innerHTML = "Your problems have been generated!";
+            }
+        }
+    } 
+    
+    function enterButtonSubmit(e){
+        if(e.keyCode == 13){
+            submitAnswer();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+</script>
+<div class="mainArea">
+<h1>Random Compound Generator</h1>  
+<p>These are the following options for generating a compound.  All percents should be represented as decimals.  You can click <a href="compoundgen-description.html">here</a> to view a description on what this website does.</p>
+<p id="resetArea"></p>
+<p><b>Mode (online only)</b> <button onClick="setMode(false);">flashcards like</button><button onClick="setMode(true);">practice assesment</button></p>
+<p>Number of compounds to generate (Only applies to text files) <input type="number" name="textCompoundNum" id="CompoundNum" value="10" /></p>
+<p>Probability of being a covalent compound <input type="text" name="covalentChance" id="percentCovalent" value="0.5" /> </p>
+<p>Show which of the compound's attributes?</p>
+<ul>name <input type="radio" id="show0" name="showOptions" value="0" /></ul>
+<ul>formula <input type="radio" id="show1" name="showOptions" value="1" /></ul>
+<ul>random <input type="radio" id="show2" name="showOptions" value="2" checked="checked" /></ul>
+<ul>both <input type="radio" id="show3" name="showOptions" value="3" /></ul>
+<p id ="generateArea"><button onClick="generateCompound(true);">Generate a compound</button> <button onClick="generateCompound(false);">Generate a text file of compounds</button></p>
+<b id = "assesmentText"></b>
+<p id="showHere"></p>
+<p id="mode"><button onClick="showName();">Show Name</button><button onClick="showFormula();">Show Formula</button><button onClick="showBoth();">Show Both</button></p>
+<p id ="feedback"></p>
+<p><b>Extra Options</b></p>
+<p>Percent chance of getting a complicated compound (E.g. Na₂Ca₂(PO₄)₂ )<input class="options" type="text" name="2" id="percentComplicated" value="0" /></p><p>Percent chance of getting a complex ion (E.g. Na[Fe(H₂O)₂Cl₄])<input class="options" type="text" name="1" id="percentComplex" value="0"/></p>
+<p>If you want to see a list of polyatomic ions or the spectrochemical series, go <a href="ion_ligand-list.html">here.</a></p>
+</div>
+<!--Footer info -->
+<footer id ="loadFoot"></footer>
+<p><b><noscript>This message appeared because you have javascript disabled.  This site won't work unless you re-enable it.<noscript></b></p>
